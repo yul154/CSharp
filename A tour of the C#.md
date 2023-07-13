@@ -551,3 +551,24 @@ class DelegateExample
     }
 }
 ```
+
+### async/await
+
+C# 支持含两个关键字的异步程序:`async` 和`await`
+- 将`async`修饰符添加到方法声明中，以声明这是异步方法
+- `await`运算符通知编译器异步等待结果完成
+- 该方法返回一个管理异步工作状态的结构。 结构通常是 System.Threading.Tasks.Task<TResult>
+
+```
+public async Task<int> RetrieveDocsHomePage() //方法声明包含 async 修饰符。
+{
+    var client = new HttpClient();
+    byte[] content = await client.GetByteArrayAsync("https://learn.microsoft.com/"); //方法 await 的主体是 GetByteArrayAsync 方法的返回。
+
+    Console.WriteLine($"{nameof(RetrieveDocsHomePage)}: Finished downloading.");
+    return content.Length; //return 语句中指定的类型与方法的 Task<T> 声明中的类型参数匹配。
+}
+```
+
+### 属性
+所有特性类都派生自 .NET 库提供的 Attribute 基类, 如果特性的名称以 Attribute 结尾，那么可以在引用特性时省略这部分名称
