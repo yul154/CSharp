@@ -1,4 +1,6 @@
-![image](https://github.com/yul154/CSharp/assets/27160394/4acf2766-699d-4423-a8d0-26f3faf26d97)# Survival of the sharpest
+![image](https://github.com/yul154/CSharp/assets/27160394/4acf2766-699d-4423-a8d0-26f3faf26d97)
+
+# Survival of the sharpest
 
 Delegate Types: In C#, a delegate is a type that represents references to methods. Delegate types are used to define the signature of methods that can be encapsulated by the delegate.
 
