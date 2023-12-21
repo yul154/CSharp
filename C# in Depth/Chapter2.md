@@ -144,8 +144,41 @@ class GenericCounterDemo
 }
 ```
 the static constructor is run twice: once for each closed, constructed type. If you didn’t have a static constructor, there would be fewer timing guarantees for exactly when each type would be initialized,
+
 ---
 ## Nullable value types
+
+###  the problem it’s trying to solve
+
+1. Use a reserved value to represent missing data
+2. Keep a separate Boolean flag to indicate whether another field has a real value or the value should be ignored
+
+### The Nullable<T> struct
+
+A primitive ver- sion of `Nullable<T> `
+```
+public struct Nullable<T> where T : struct
+{
+    private readonly T value;
+    private readonly bool hasValue;
+    public Nullable(T value)
+    {
+        this.value = value;
+        this.hasValue = true;
+    }
+    public bool HasValue { get { return hasValue; } }
+    public T Value
+    {
+    get {
+            return value;
+        }
+    if (!hasValue)
+    {
+        throw new InvalidOperationException();
+    }
+  }
+}
+```
 
 
 
