@@ -110,3 +110,43 @@ ple, typeof(List<>)
 
 **Generic type initialization and state**
 
+Each closed, constructed type is initialized sep- arately and has its own independent set of static fields.
+
+```
+class GenericCounter<T>
+{
+    private static int value;
+    static GenericCounter()
+    {
+    Console.WriteLine("Initializing counter for {0}", typeof(T));
+    }
+    public static void Increment()
+    {
+    value++; }
+    public static void Display()
+    {
+        Console.WriteLine("Counter for {0}: {1}", typeof(T), value);
+    }
+}
+class GenericCounterDemo
+{
+    static void Main()
+    {
+    Triggers initialization for GenericCounter<string>
+    Triggers initialization for GenericCounter<int>
+    GenericCounter<string>.Increment();
+    GenericCounter<string>.Increment();
+    GenericCounter<string>.Display();
+    GenericCounter<int>.Display();
+    GenericCounter<int>.Increment();
+    GenericCounter<int>.Display();
+    }
+}
+```
+the static constructor is run twice: once for each closed, constructed type. If you didn’t have a static constructor, there would be fewer timing guarantees for exactly when each type would be initialized,
+---
+## Nullable value types
+
+
+
+
