@@ -157,7 +157,7 @@ the static constructor is run twice: once for each closed, constructed type. If 
 
 A primitive ver- sion of `Nullable<T> `
 ```
-public struct Nullable<T> where T : struct
+public struct Nullable<T> where T : struct //allows T to be any value type except another Nullable<T>.
 {
     private readonly T value;
     private readonly bool hasValue;
@@ -180,6 +180,42 @@ public struct Nullable<T> where T : struct
 }
 ```
 
+Nullable value types behave differently than non-nullable value types when it comes to boxing
+-  When a value of a non-nullable value type is boxed, the result is a reference to an object of a type that’s the boxed form of the original type.
+-  Nullable value types have no boxed equivalent
+-  The result of boxing a value of type Nullable<T> depends on the HasValue property
+    - If HasValue is false, the result is a null reference.
+    - If HasValue is true, the result is a reference to an object of type “boxed T.
+- you call `GetType()` on a value type value, it always needs to be boxed first
+-  With nullable value types, it’ll either cause a `NullReferenceException`
+
+```
+Nullable<int> noValue = new Nullable<int>();
+Console.WriteLine(noValue.GetType()); // throw NullReferenceException
+```
 
 
+**THE ? TYPE SUFFIX**
+
+Add a ? to the end of the name of a non-nullable value type that’s precisely equivalent to using Nullable<T> for the same typ
+```
+Nullable<int> x; // == int? x;
+Nullable<Int32> x // Int32? x;
+```
+
+**THE NULL LITERAL**
+
+Two lines are equivalent:
+```
+int? x = new int?();
+int? x = null;
+```
+
+**CONVERSIONS**
+The following conversions are also available:
+-  `Nullable<S> `to` Nullable<T>` (implicit or explicit, depending on the original conversion)
+- `S` to `Nullable<T>` (implicit or explicit, depending on the original conversion)
+-  `Nullable<S>` to `T` (always explicit)
+
+**LIFTED OPERATORS**
 
