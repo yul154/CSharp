@@ -218,4 +218,138 @@ The following conversions are also available:
 -  `Nullable<S>` to `T` (always explicit)
 
 **LIFTED OPERATORS**
+>  Operators that are automatically applied to nullable value types
 
+```
+int? a = 5;
+int? b = null;
+int? result = a + b; // return null
+```
+lifted operators restrctions
+1. The true and false operators are never lifted.
+2. Only operators with non-nullable value types for the operands are lifted.
+3. For the unary and binary operators (other than equality and relational operators), the return type of the original operator has to be a non-nullable value type.
+4. For the equality and relational operators, the return type of the original operator has to be bool.
+5. The `&` and `|` operators on `Nullable<bool>` have separately defined behaviors, which we’ll consider presently.
+
+
+* a null value is returned if any of the operands is a null value
+* two null values are consid- ered equal, and a null value and any non-null value are considered different
+
+for nullable object
+
+
+|   A   |   B   |   A && B   |   A || B   |   A ^ B   |   !A  |
+|-------|-------|------------|------------|-----------|-------|
+| false | false |   false    |   false    |   false   |  true |
+| false | true  |   false    |   true     |   true    |  true |
+| false | null  |   false    |   null     |   null    |  true |
+| true  | false |   false    |   true     |   true    | false |
+| true  | true  |   true     |   true     |  false    | false |
+| true  | null  |   null     |   true     |   null    | false |
+| null  | false |   false    |   null     |   null    |  null |
+| null  | true  |   null     |   true     |   null    |  null |
+| null  | null  |   null     |   null     |   null    |  null |
+
+## THE `AS` OPERATOR AND NULLABLE VALUE TYPES
+>  used for type casting and type checking
+
+* Allows you to safely convert an object to a specific type
+* check if an object is of a certain type, without throwing an exception if the conversion is not possible.
+* Using the `as` operator with nullable types is surprisingly slow,it’s slower than `is` and then a cast in all the framework and compiler combinations I’ve tried.
+
+## THE NULL-COALESCING `??` OPERATOR
+
+`??` is a binary operator that evaluates an expression of first `??` second by going
+through the following steps (roughly speaking):
+1. Evaluate first.
+2. If the result is non-null, that’s the result of the whole expression.
+3 Otherwise, evaluate second, and use that as the result of the whole expression.
+
+```
+int? nullableInt = null;
+int regularInt = nullableInt ?? 0;
+Console.WriteLine(regularInt);  // Output: 0
+
+string nullableString = null;
+string regularString = nullableString ?? "default";
+Console.WriteLine(regularString);  // Output: "default"
+```
+
+## Simplified delegate creation
+
+ basic purpose ： Encapsulate a piece of code so that it can be passed around and executed in a type-safe manner, considering the return type and parameters
+
+ ### Method group conversions
+
+ A method group refers to one or more methods with the same name
+
+
+ In c# 1
+```
+private void HandleButtonClick(object sender, EventArgs e)
+EventHandler handler = new EventHandler(HandleButtonClick);
+```
+
+In c#2 method group conversions :a method group is implicitly convertible to any delegate type with a signature that’s compatible with one of the overloads
+```
+EventHandler handler = HandleButtonClick;
+button.Click += HandleButtonClick;
+```
+
+### Anonymous methods
+
+ Anonymous methods allow you to create a delegate instance without having a real method to refer to7 just by writing some code inline wherever you want to create the instance
+
+ just use the `delegate` keyword, optionally include some parameters, and then write some code in braces
+```
+public void AddClickLogger(Control control, string message)
+{
+    control.Click += delegate(object sender, EventArgs e)
+    {
+        Console.WriteLine(message);
+    };
+}
+```
+
+### Delegate compatibility
+
+In c#1 you needed a method with a signature with exactly the same return type and parameter types (and ref/out modifiers) to create a delegate instance
+```
+public delegate void Printer(string message);
+
+public void PrintAnything(object obj) {
+    Console.WriteLine(obj);
+}
+
+```
+
+```
+Printer p1 = new Printer(PrintAnything);
+Printer p2 = PrintAnything;
+```
+
+## Iterators
+
+Implementing either the generic or nongeneric interfaces manually can be tedious and error prone, so C# 2 introduced a new feature called iterators to make it simpler.
+
+### Introduction to iterators
+
+An iterator is a method or property implemented with an iterator block, which is in turn just a block of code using the `yield return` or `yield break` statements.
+
+
+Iterator blocks can be used only to implement methods or properties with one of the following return types
+- IEnumerable
+- IEnumerable<T> (where T can be a type parameter or a regular type)
+- IEnumerator
+- IEnumerator<T> (where T can be a type parameter or a regular type)
+
+ Each iterator has a `yield type` based on its return type. If the return type is one of the non- generic interfaces, the yield type is `object`
+ 
+### Lazy execution
+
+ An`IEnumerable` is a sequence that can be iterated over, whereas an `IEnumerator` is like a cursor within a sequence
+ - an IEnumerable as a book and an IEnumerator as a bookmark
+ - There can be multiple bookmarks within a book at any one time.
+ - Moving a bookmark to the next page doesn’t change the book or any of the other bookmarks,
+ 
