@@ -354,4 +354,60 @@ Iterator blocks can be used only to implement methods or properties with one of 
  - Moving a bookmark to the next page doesn’t change the book or any of the other bookmarks,
  
 
-### Evaluation of yield statements
+### Evaluation of `yield` statements
+
+when `MoveNext()` returns
+1. it’s as if the method is paused.
+2. The generated code keeps track of the point you’ve reached in the method along with any other state, such as the local variable i in your loop.
+3. When `MoveNext()` is called again, execution picks up from the point you’ve reached and keeps going. That’s what makes it lazy
+
+### The importance of being lazy
+
+### Evaluation of `finally` blocks
+
+Use `using` statements than the raw `finally` blocks, but you can view `using` statements as effectively built with `finally` blocks, so the same behavior holds
+
+The iterator will not be paused forever in the try block without executing the finally block. 
+- When the code fetching items from an iterator calls `MoveNext()` only once, it will retrieve the first value from the sequence and then exit the iterator.
+- At this point, the finally block will be executed before the iterator is completely done.
+- The `finally` block is designed to execute regardless of how the iterator is exited, whether it's due to reaching the end of the sequence, encountering a `yield` break statement, or being stopped prematurely by the calling code
+
+### The importance of `finally` handling
+
+The nongeneric `IEnumerator` interface doesn’t extend `IDisposable`, but the `foreach` loop checks whether the runtime implementation also implements `IDisposable`, and calls Dispose if necessary.
+
+
+### Implementation sketch
+
+----
+
+## Minor features
+- Partial types that allow code for a single type to be split across multiple source files
+- Static classes for utility types
+- Separate accessibility (public, private, and so on) for get and set accessors in properties
+- The `[InternalsVisibleTo]` attribute, which makes testing simpler
+
+
+### Partial types
+When you declare a class or a struct as `partial`, you can split the definition of that class or struct into multiple files. 
+
+Each part of the class or struct is declared with the `partial` keyword, and all parts are combined into a single entity by the compiler.
+
+If the type is `generic`, every part has to declare the same set of type parameters with the same names
+
+
+**partial methods**
+- Partial methods are implicitly `private` and must be `void` with no `out` parameters.
+- Partial methods are declared without a body in one part of a partial type.
+- At compile time, only those partial methods that have implementations are retained. Calls to partial methods without an implementation are removed during compilation.
+
+
+### Static classes
+> classes declared with the static modifier
+
+- Utility classes composed entirely of static methods,
+-  Static classes can’t declare instance methods, properties, events, or constructors
+-  They can contain regular nested types
+
+### Separate getter/setter access for properties
+
