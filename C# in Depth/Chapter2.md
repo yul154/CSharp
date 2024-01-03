@@ -410,4 +410,39 @@ If the type is `generic`, every part has to declare the same set of type paramet
 -  They can contain regular nested types
 
 ### Separate getter/setter access for properties
+by far the most common combination is to have a public `getter` and a private `setter`
 
+
+### Namespace aliases
+
+```
+using System;
+using WinForms = System.Windows.Forms;
+using WebForms = System.Web.UI.WebControls;
+class Test {
+    static void Main()
+    {
+        Console.WriteLine(typeof(WinForms.Button)); //Uses the aliases to qualify a name
+        Console.WriteLine(typeof(WebForms.Button)); //Uses the aliases to qualify a name
+    }
+}
+```
+
+
+a namespace alias qualifier : a pair of colons. This is used only for namespace
+
+Two types with the same name in the same namespace but provided by different assemblies? 
+
+
+### Fixed-size buffers
+
+Fixed-size buffers can be used only in unsafe code and only within structs
+
+They effectively allocate a chunk of memory inline within the struct using the fixed modi- fier.
+
+This struct could be used for interoperability with native code or just used within regular managed code.
+
+
+### InternalsVisibleTo
+
+`[InternalsVisibleToAttribute]`, which is an assembly-level attribute with a single parameter specifying another assembly.
